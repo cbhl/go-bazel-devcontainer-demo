@@ -8,7 +8,7 @@ Last updated: Jul 17, 2025.
 
 Go here and follow the instructions:
 
-- https://app.gitpod.io/#https://github.com/cbhl/workspaces
+- https://app.gitpod.io/#https://github.com/cbhl/go-bazel-devcontainer-demo
 
 If the devcontainer or Dockerfile fails to bulid, you get both pieces!
 
