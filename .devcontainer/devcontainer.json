@@ -21,6 +21,9 @@
         "ghcr.io/devcontainers/features/go:1": {
             "version": "none"
         },
+        "ghcr.io/devcontainers-community/features/bazel:1": {
+            "version": "none"
+        },
         "ghcr.io/devcontainers/features/node:1": {
             "version": "none"
         },
