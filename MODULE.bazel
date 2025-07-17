@@ -1,0 +1,13 @@
+module(
+    name = "backend",
+    version = "0.1.0",
+)
+
+bazel_dep(name = "rules_go", version = "0.47.0")
+bazel_dep(name = "gazelle", version = "0.36.0")
+
+go_register_toolchains_ext = use_extension("@rules_go//go:extensions.bzl", "go_register_toolchains")
+go_rules_dependencies_ext = use_extension("@rules_go//go:extensions.bzl", "go_rules_dependencies")
+
+use_repo(go_register_toolchains_ext, "go_register_toolchains")
+use_repo(go_rules_dependencies_ext, "go_rules_dependencies")

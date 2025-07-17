@@ -1,0 +1,2 @@
+build --curses=yes
+build --color=yes
