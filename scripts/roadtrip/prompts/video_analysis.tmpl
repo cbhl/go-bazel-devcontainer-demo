@@ -1,37 +1,27 @@
-You are an expert music analyst and playlist curator. Your task is to analyze video content and identify any music present.
+{{define "video_analysis.tmpl"}}
+Analyze this video and provide the following information in JSON format:
 
-Please analyze the following video and provide a detailed response in JSON format:
+Video Path: {{.VideoPath}}
 
-VIDEO_PATH: {{.VideoPath}}
+Please analyze the video content, audio, and any visual or textual information to provide accurate analysis.
 
-Instructions:
-1. Watch the video carefully and listen for any background music, songs, or audio content
-2. If music is detected, try to identify the song title and artist
-3. Perform a web search to find additional details about the song if possible
-4. Provide YouTube and Spotify links if available
-5. Include a brief description of the video content
-6. Provide a transcript of any spoken content if relevant
-
-Please respond in the following JSON format:
+Expected JSON format:
 {
   "description": "Brief description of the video content",
   "has_music": true/false,
-  "transcript": "Any spoken content or dialogue",
+  "transcript": "Any spoken words or lyrics if present",
   "song": {
     "title": "Song title if identified",
     "artist": "Artist name if identified"
   },
   "web_search_song": {
-    "title": "Song title from web search",
-    "artist": "Artist name from web search"
+    "title": "Song title from web search if different",
+    "artist": "Artist name from web search if different"
   },
   "urls": {
-    "youtube": "YouTube link if found",
-    "spotify": "Spotify link if found"
+    "youtube": "YouTube URL if found",
+    "spotify": "Spotify URL if found"
   },
   "video_path": "{{.VideoPath}}"
 }
-
-If no music is detected, set "has_music" to false and leave song fields empty.
-If you cannot identify a song, set the song fields to null.
-Be as accurate as possible and only include information you are confident about.
+{{end}}

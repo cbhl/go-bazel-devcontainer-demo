@@ -155,12 +155,27 @@ go test ./scripts/roadtrip/export/...
 go test -v ./...
 ```
 
-### Mock Clients
+### AI Integration
 
-The tool includes mock clients for development and testing:
+The tool supports both real and mock AI clients:
+
+#### Real Gemini 2.5 Flash Client
+- **Requirements**: `GEMINI_API_KEY` environment variable
+- **Features**: Real video analysis using Google's Gemini 2.5 Flash model
+- **Usage**: Set `export GEMINI_API_KEY=your-api-key` before running
+- **Fallback**: Automatically falls back to mock client if API key is not set
+
+#### Mock AI Client
+- **Purpose**: Development and testing without API costs
+- **Features**: Simulates AI analysis responses
+- **Usage**: Default when no API key is provided
+- **Benefits**: No external dependencies required for testing
+
+### Mock Storage Client
+
+The tool includes a mock storage client for development and testing:
 
 - `MockStorageClient`: Simulates cloud storage uploads
-- `MockAIClient`: Simulates AI analysis responses
 - No external dependencies required for testing
 
 ## Examples

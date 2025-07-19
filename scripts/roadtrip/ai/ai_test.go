@@ -3,6 +3,7 @@ package ai
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -91,13 +92,37 @@ func TestAnalysisManager_AnalyzeVideos(t *testing.T) {
 }
 
 func TestPromptManager_NewPromptManager(t *testing.T) {
-	// This test requires the template file to exist
-	// For now, we'll skip it in CI
-	if testing.Short() {
-		t.Skip("skipping prompt manager test in short mode")
+	// Test with actual template file
+	templatePath := "../prompts/video_analysis.tmpl"
+	
+	manager, err := NewPromptManager(templatePath)
+	if err != nil {
+		t.Fatalf("Failed to create prompt manager: %v", err)
 	}
 
-	// TODO: Add test with actual template file
+	// Test rendering with sample data
+	data := struct {
+		VideoPath string
+	}{
+		VideoPath: "test_video.mp4",
+	}
+
+	rendered, err := manager.RenderPrompt(data)
+	if err != nil {
+		t.Fatalf("Failed to render prompt: %v", err)
+	}
+
+	if rendered == "" {
+		t.Error("Rendered prompt should not be empty")
+	}
+
+	if !strings.Contains(rendered, "test_video.mp4") {
+		t.Error("Rendered prompt should contain the video path")
+	}
+
+	if !strings.Contains(rendered, "JSON format") {
+		t.Error("Rendered prompt should contain JSON format instructions")
+	}
 }
 
 func TestSong_JSON(t *testing.T) {
@@ -126,4 +151,25 @@ func TestSong_JSON(t *testing.T) {
 	if unmarshaled.Artist != song.Artist {
 		t.Errorf("Expected artist '%s', got '%s'", song.Artist, unmarshaled.Artist)
 	}
+}
+
+func TestGeminiAIClient_NewGeminiAIClient(t *testing.T) {
+	// This test requires GEMINI_API_KEY to be set
+	if testing.Short() {
+		t.Skip("skipping Gemini client test in short mode")
+	}
+
+	// Test client creation (will fail if no API key, which is expected)
+	client, err := NewGeminiAIClient(context.Background())
+	if err != nil {
+		// Expected if no API key is set
+		if strings.Contains(err.Error(), "GEMINI_API_KEY") {
+			t.Skip("GEMINI_API_KEY not set, skipping test")
+		}
+		t.Fatalf("Unexpected error creating Gemini client: %v", err)
+	}
+	defer client.Close()
+
+	// If we get here, the client was created successfully
+	// We could add more tests here if we had a test video file
 }

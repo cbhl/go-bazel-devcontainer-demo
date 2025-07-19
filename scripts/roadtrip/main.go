@@ -206,8 +206,21 @@ func (b *BuildPlaylistCmd) Run() error {
 	}
 	fmt.Printf("Validate JSON: %v\n", b.Validate)
 	
-	// Create AI client (using mock for now)
-	client := ai.NewMockAIClient()
+	// Create AI client (use real Gemini if API key is available, otherwise use mock)
+	var client ai.AIClient
+	if os.Getenv("GEMINI_API_KEY") != "" {
+		var err error
+		client, err = ai.NewGeminiAIClient(context.Background())
+		if err != nil {
+			fmt.Printf("Warning: Failed to create Gemini client (%v), falling back to mock client\n", err)
+			client = ai.NewMockAIClient()
+		} else {
+			fmt.Println("Using real Gemini 2.5 Flash for video analysis")
+		}
+	} else {
+		fmt.Println("No GEMINI_API_KEY found, using mock client for testing")
+		client = ai.NewMockAIClient()
+	}
 	defer client.Close()
 	
 	// Create analysis manager
