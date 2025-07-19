@@ -25,8 +25,8 @@ Video Input → Split into Chunks → Upload to Cloud → AI Analysis → CSV Ex
   - Split videos into time-based chunks
   - Use copy codec for fast processing
   - Progress tracking and output visibility
-- **Input**: Video file, time range, chunk duration
-- **Output**: Multiple video chunks in specified directory
+- **Input**: `--in` video file, `--start`/`--end` time range, `--chunk-duration`
+- **Output**: Multiple video chunks in specified directory (`--out`)
 
 ### 3. Cloud Storage Module
 - **Technology**: Google Cloud Storage client library
@@ -34,6 +34,7 @@ Video Input → Split into Chunks → Upload to Cloud → AI Analysis → CSV Ex
   - Upload video chunks to GCS
   - Support for glob patterns
   - Progress tracking
+- **Input**: `--in` directory/glob pattern, `--project-id`, `--zone`, `--bucket`
 - **Testing**: MinIO compatibility for local testing
 
 ### 4. AI Analysis Module
@@ -43,6 +44,7 @@ Video Input → Split into Chunks → Upload to Cloud → AI Analysis → CSV Ex
   - Music detection and identification
   - Web search integration for song details
   - Environment variable configuration (GEMINI_API_KEY)
+- **Input**: `--in` GCS paths (multiple), `--validate-json` flag
 - **Output**: Verbatim Gemini response with optional JSON validation
 
 ### 5. Data Export Module
@@ -52,6 +54,7 @@ Video Input → Split into Chunks → Upload to Cloud → AI Analysis → CSV Ex
   - JSON to CSV conversion with error handling
   - Standardized playlist format
   - Unit testable with mock data including malformed JSON
+- **Input**: `--in` JSON file or stdin
 
 ## Data Structures
 
@@ -155,6 +158,31 @@ scripts/roadtrip/
 2. **Memory Management**: Stream large files instead of loading entirely
 3. **Progress Tracking**: Provide real-time feedback for long operations
 4. **Caching**: Cache AI responses to avoid duplicate API calls
+
+## CLI Design Principles
+
+### Consistent Flag Usage
+All commands follow a consistent pattern for input parameters:
+- **`--in`**: Used for all input files, directories, and paths
+- **`--out`**: Used for output directories and files
+- **`--start`/`--end`**: Used for time ranges
+- **`--chunk-duration`**: Used for time-based chunking
+- **`--project-id`/`--zone`/`--bucket`**: Used for cloud storage configuration
+
+### Command Examples
+```bash
+# Video processing
+roadtrip split-video --in video.mp4 --start 00:00:00 --end 00:05:00 --chunk-duration 60 --out chunks/
+
+# Cloud storage
+roadtrip upload-chunks --in chunks/*.mp4 --project-id my-project --bucket gs://my-bucket/
+
+# AI analysis
+roadtrip build-playlist --in gs://bucket/chunk-*.mp4 --validate-json
+
+# Data export
+roadtrip build-playlist-csv --in analysis.json
+```
 
 ## Configuration
 

@@ -35,11 +35,11 @@ type CLI struct {
 }
 
 type SplitVideoCmd struct {
-    InputFile    string `flag:"in" help:"Input video file path"`
-    StartTime    string `flag:"start" help:"Start timestamp (HH:MM:SS)"`
-    EndTime      string `flag:"end" help:"End timestamp (HH:MM:SS)"`
+    In            string `flag:"in" help:"Input video file path"`
+    StartTime     string `flag:"start" help:"Start timestamp (HH:MM:SS)"`
+    EndTime       string `flag:"end" help:"End timestamp (HH:MM:SS)"`
     ChunkDuration int    `flag:"chunk-duration" default:"30" help:"Chunk duration in seconds"`
-    OutputDir    string `flag:"out" default:"out" help:"Output directory"`
+    OutputDir     string `flag:"out" default:"out" help:"Output directory"`
 }
 
 func (s *SplitVideoCmd) Run() error {
@@ -67,15 +67,25 @@ func main() {
 ## Command Design Patterns
 
 ### 1. Flag Naming Conventions
-- Use kebab-case for flag names: `--input-file`, `--chunk-duration`
+- Use kebab-case for flag names: `--chunk-duration`, `--start-time`
+- Use `--in` consistently for all input file/path parameters
 - Use descriptive names that clearly indicate purpose
 - Provide sensible defaults where appropriate
 - Always include help text for every flag
 
-### 2. Argument Validation
+### 1.1. Input Flag Standardization
+All commands should use `--in` for input parameters:
+- `split-video --in video.mp4` (input video file)
+- `upload-chunks --in /path/to/chunks` (input directory/glob)
+- `build-playlist --in gs://bucket/path1 --in gs://bucket/path2` (multiple GCS paths)
+- `build-playlist-csv --in input.json` (input JSON file)
+
+This provides consistency across all commands and makes the CLI more intuitive.
+
+### 2. Input Validation
 ```go
 type SplitVideoCmd struct {
-    InputFile string `arg:"" validate:"file"`
+    In        string `flag:"in" validate:"file"`
     StartTime string `flag:"start" validate:"time"`
     EndTime   string `flag:"end" validate:"time"`
 }
@@ -114,7 +124,7 @@ import (
 )
 
 func (s *SplitVideoCmd) Run() error {
-    fmt.Printf("Processing video: %s\n", s.InputFile)
+    fmt.Printf("Processing video: %s\n", s.In)
     fmt.Printf("Time range: %s to %s\n", s.StartTime, s.EndTime)
     
     // Create progress bar with logging support
@@ -181,11 +191,11 @@ func TestSplitVideoCmd_Integration(t *testing.T) {
     
     // Run command
     cmd := SplitVideoCmd{
-        InputFile:    testFile,
-        StartTime:    "00:00:00",
-        EndTime:      "00:00:30",
+        In:            testFile,
+        StartTime:     "00:00:00",
+        EndTime:       "00:00:30",
         ChunkDuration: 10,
-        OutputDir:    tmpDir,
+        OutputDir:     tmpDir,
     }
     
     err := cmd.Run()
