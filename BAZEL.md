@@ -118,7 +118,7 @@ bazelisk run //scripts/roadtrip:roadtrip -- --help
 bazel-bin/scripts/roadtrip/roadtrip_/roadtrip --help
 
 # Run video splitting command
-bazelisk run //scripts/roadtrip:roadtrip -- split-video input.mp4 --start-time 00:00:10 --end-time 00:00:30 --chunk-duration 5 --output-dir chunks/
+bazelisk run //scripts/roadtrip:roadtrip -- split-video --in input.mp4 --start-time 00:00:10 --end-time 00:00:30 --chunk-duration 5 --output-dir chunks/
 ```
 
 ### Testing

@@ -7,8 +7,8 @@ import (
 func TestCLIStructure(t *testing.T) {
 	// Test that the CLI struct can be created
 	cli := CLI{}
-	if cli.SplitVideo.InputFile != "" {
-		t.Error("Expected empty InputFile initially")
+	if cli.SplitVideo.In != "" {
+		t.Error("Expected empty In initially")
 	}
 }
 

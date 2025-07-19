@@ -18,7 +18,7 @@ type CLI struct {
 
 // SplitVideoCmd represents the split-video command
 type SplitVideoCmd struct {
-	InputFile     string `arg:"" help:"Input video file path"`
+	In            string `flag:"in" help:"Input video file path"`
 	StartTime     string `flag:"start" help:"Start timestamp (HH:MM:SS)"`
 	EndTime       string `flag:"end" help:"End timestamp (HH:MM:SS)"`
 	ChunkDuration int    `flag:"chunk-duration" default:"30" help:"Chunk duration in seconds"`
@@ -27,7 +27,7 @@ type SplitVideoCmd struct {
 
 // UploadChunksCmd represents the upload-chunks command
 type UploadChunksCmd struct {
-	InputPath string `arg:"" help:"Input folder or glob pattern"`
+	In        string `flag:"in" help:"Input folder or glob pattern"`
 	ProjectID string `flag:"project-id" help:"GCP project ID"`
 	Zone      string `flag:"zone" help:"GCP zone"`
 	Bucket    string `flag:"bucket" help:"GCS bucket path"`
@@ -35,18 +35,22 @@ type UploadChunksCmd struct {
 
 // BuildPlaylistCmd represents the build-playlist command
 type BuildPlaylistCmd struct {
-	InputPaths []string `arg:"" help:"GCS paths to analyze"`
-	Validate   bool     `flag:"validate-json" help:"Validate JSON output"`
+	In       []string `flag:"in" help:"GCS paths to analyze"`
+	Validate bool     `flag:"validate-json" help:"Validate JSON output"`
 }
 
 // BuildPlaylistCSVCmd represents the build-playlist-csv command
 type BuildPlaylistCSVCmd struct {
-	InputFile string `arg:"" help:"Input JSON file or stdin"`
+	In string `flag:"in" help:"Input JSON file or stdin"`
 }
 
 // Run implements the split-video command
 func (s *SplitVideoCmd) Run() error {
-	fmt.Printf("Processing video: %s\n", s.InputFile)
+	if s.In == "" {
+		return fmt.Errorf("input file is required (use --in flag)")
+	}
+	
+	fmt.Printf("Processing video: %s\n", s.In)
 	fmt.Printf("Time range: %s to %s\n", s.StartTime, s.EndTime)
 	fmt.Printf("Chunk duration: %d seconds\n", s.ChunkDuration)
 	fmt.Printf("Output directory: %s\n", s.OutputDir)
@@ -58,7 +62,7 @@ func (s *SplitVideoCmd) Run() error {
 	}
 
 	// Get video info
-	info, err := processor.GetVideoInfo(s.InputFile)
+	info, err := processor.GetVideoInfo(s.In)
 	if err != nil {
 		return fmt.Errorf("failed to get video info: %w", err)
 	}
@@ -69,7 +73,7 @@ func (s *SplitVideoCmd) Run() error {
 	}
 
 	// Split video into chunks
-	if err := processor.SplitVideo(s.InputFile, s.OutputDir, s.StartTime, s.EndTime, s.ChunkDuration); err != nil {
+	if err := processor.SplitVideo(s.In, s.OutputDir, s.StartTime, s.EndTime, s.ChunkDuration); err != nil {
 		return fmt.Errorf("failed to split video: %w", err)
 	}
 
@@ -78,7 +82,11 @@ func (s *SplitVideoCmd) Run() error {
 
 // Run implements the upload-chunks command
 func (u *UploadChunksCmd) Run() error {
-	fmt.Printf("Uploading chunks from: %s\n", u.InputPath)
+	if u.In == "" {
+		return fmt.Errorf("input path is required (use --in flag)")
+	}
+	
+	fmt.Printf("Uploading chunks from: %s\n", u.In)
 	fmt.Printf("Project ID: %s\n", u.ProjectID)
 	fmt.Printf("Zone: %s\n", u.Zone)
 	fmt.Printf("Bucket: %s\n", u.Bucket)
@@ -90,8 +98,12 @@ func (u *UploadChunksCmd) Run() error {
 
 // Run implements the build-playlist command
 func (b *BuildPlaylistCmd) Run() error {
-	fmt.Printf("Building playlist from %d paths\n", len(b.InputPaths))
-	for i, path := range b.InputPaths {
+	if len(b.In) == 0 {
+		return fmt.Errorf("input paths are required (use --in flag)")
+	}
+	
+	fmt.Printf("Building playlist from %d paths\n", len(b.In))
+	for i, path := range b.In {
 		fmt.Printf("  %d: %s\n", i+1, path)
 	}
 	fmt.Printf("Validate JSON: %v\n", b.Validate)
@@ -103,7 +115,11 @@ func (b *BuildPlaylistCmd) Run() error {
 
 // Run implements the build-playlist-csv command
 func (b *BuildPlaylistCSVCmd) Run() error {
-	fmt.Printf("Converting to CSV from: %s\n", b.InputFile)
+	if b.In == "" {
+		return fmt.Errorf("input file is required (use --in flag)")
+	}
+	
+	fmt.Printf("Converting to CSV from: %s\n", b.In)
 	
 	// TODO: Implement CSV conversion logic
 	fmt.Println("Hello from build-playlist-csv command!")

@@ -25,11 +25,11 @@ Build a command-line tool in Go to help create roadtrip playlists from vlog vide
 
 ### Phase 3: Video Processing
 - [x] Add `split-video` command with flags:
-  - Input video filename
-  - Start timestamp
-  - End timestamp  
-  - Chunk duration
-  - Output folder (default: `out/`)
+  - Input video filename (`--in`)
+  - Start timestamp (`--start`)
+  - End timestamp (`--end`)
+  - Chunk duration (`--chunk-duration`)
+  - Output folder (`--out`, default: `out/`)
 - [x] Implement ffmpeg integration with copy codec
 - [x] Add progress bar and command output visibility
 - [x] Test with sample video files
@@ -38,10 +38,10 @@ Build a command-line tool in Go to help create roadtrip playlists from vlog vide
 
 ### Phase 4: Cloud Storage Integration
 - [ ] Add `upload-chunks` command with flags:
-  - Input folder/glob pattern
-  - GCP project-id
-  - GCP zone
-  - GCS bucket path
+  - Input folder/glob pattern (`--in`)
+  - GCP project-id (`--project-id`)
+  - GCP zone (`--zone`)
+  - GCS bucket path (`--bucket`)
 - [ ] Implement GCS upload functionality
 - [ ] Add unit tests with MinIO compatibility
 - [ ] Test upload functionality
@@ -49,12 +49,12 @@ Build a command-line tool in Go to help create roadtrip playlists from vlog vide
 ### Phase 5: AI Analysis
 - [ ] Create `scripts/roadtrip/prompts/` directory
 - [ ] Design Gemini 2.5 Flash prompt template for video analysis
-- [ ] Add `build-playlist` command for GCS path processing
+- [ ] Add `build-playlist` command for GCS path processing (`--in` for paths, `--validate-json` flag)
 - [ ] Implement Gemini API integration with GEMINI_API_KEY environment variable
 - [ ] Add verbatim output handling with optional JSON validation flag
 
 ### Phase 6: Data Export
-- [ ] Add `build-playlist-csv` command
+- [ ] Add `build-playlist-csv` command (`--in` for input JSON file)
 - [ ] Implement relaxed JSON parsing for non-standard Gemini outputs
 - [ ] Add comprehensive unit tests with example data including malformed JSON
 - [ ] Test CSV output format
