@@ -1,10 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log/slog"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/alecthomas/kong"
+	"backend/scripts/roadtrip/storage"
 	"backend/scripts/roadtrip/video"
 )
 
@@ -91,9 +96,99 @@ func (u *UploadChunksCmd) Run() error {
 	fmt.Printf("Zone: %s\n", u.Zone)
 	fmt.Printf("Bucket: %s\n", u.Bucket)
 	
-	// TODO: Implement upload logic
-	fmt.Println("Hello from upload-chunks command!")
+	// Parse bucket path to extract bucket name and prefix
+	bucketName, prefix, err := parseBucketPath(u.Bucket)
+	if err != nil {
+		return fmt.Errorf("invalid bucket path: %w", err)
+	}
+	
+	// Find files to upload
+	files, err := findFiles(u.In)
+	if err != nil {
+		return fmt.Errorf("failed to find files: %w", err)
+	}
+	
+	if len(files) == 0 {
+		return fmt.Errorf("no files found matching pattern: %s", u.In)
+	}
+	
+	fmt.Printf("Found %d files to upload\n", len(files))
+	
+	// Create storage client
+	ctx := context.Background()
+	client, err := storage.NewGCSClient(ctx, u.ProjectID, bucketName)
+	if err != nil {
+		return fmt.Errorf("failed to create GCS client: %w", err)
+	}
+	defer client.Close()
+	
+	// Create upload manager
+	manager := storage.NewUploadManager(client)
+	defer manager.Close()
+	
+	// Upload files
+	if err := manager.UploadFiles(ctx, files, prefix); err != nil {
+		return fmt.Errorf("failed to upload files: %w", err)
+	}
+	
+	fmt.Printf("Successfully uploaded %d files to %s\n", len(files), u.Bucket)
 	return nil
+}
+
+// parseBucketPath extracts bucket name and prefix from a GCS path
+func parseBucketPath(bucketPath string) (bucketName, prefix string, err error) {
+	if !strings.HasPrefix(bucketPath, "gs://") {
+		return "", "", fmt.Errorf("bucket path must start with gs://")
+	}
+	
+	path := strings.TrimPrefix(bucketPath, "gs://")
+	parts := strings.SplitN(path, "/", 2)
+	
+	bucketName = parts[0]
+	if len(parts) > 1 {
+		prefix = parts[1]
+	}
+	
+	return bucketName, prefix, nil
+}
+
+// findFiles finds files matching the input pattern
+func findFiles(pattern string) ([]string, error) {
+	// Handle glob patterns
+	if strings.Contains(pattern, "*") || strings.Contains(pattern, "?") {
+		matches, err := filepath.Glob(pattern)
+		if err != nil {
+			return nil, fmt.Errorf("failed to expand glob pattern: %w", err)
+		}
+		return matches, nil
+	}
+	
+	// Handle directory
+	info, err := os.Stat(pattern)
+	if err != nil {
+		return nil, fmt.Errorf("failed to stat path: %w", err)
+	}
+	
+	if info.IsDir() {
+		// Find all files in directory
+		var files []string
+		err := filepath.Walk(pattern, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() {
+				files = append(files, path)
+			}
+			return nil
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to walk directory: %w", err)
+		}
+		return files, nil
+	}
+	
+	// Single file
+	return []string{pattern}, nil
 }
 
 // Run implements the build-playlist command
