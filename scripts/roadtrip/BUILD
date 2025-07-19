@@ -1,5 +1,11 @@
 load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 
+filegroup(
+    name = "prompts",
+    srcs = glob(["prompts/**"]),
+    visibility = ["//scripts/roadtrip:__subpackages__"],
+)
+
 go_library(
     name = "roadtrip_lib",
     srcs = ["main.go"],
