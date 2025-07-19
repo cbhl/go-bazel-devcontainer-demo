@@ -14,6 +14,6 @@ go_library(
 go_test(
     name = "ai_test",
     srcs = ["ai_test.go"],
-    data = glob(["testdata/**"]) + glob(["prompts/**"]),
+    data = glob(["testdata/**"]) + glob(["../prompts/**"]),
     embed = [":ai"],
 )
