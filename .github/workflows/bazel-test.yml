@@ -25,10 +25,7 @@ jobs:
         go env
         
     - name: Install Bazelisk
-      run: |
-        curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o /usr/local/bin/bazelisk
-        chmod +x /usr/local/bin/bazelisk
-        bazelisk version
+      uses: bazelbuild/setup-bazelisk@v2
         
     - name: Install ffmpeg
       run: |

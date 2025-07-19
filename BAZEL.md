@@ -25,6 +25,8 @@ This repository uses Bazel as the primary build system for all binaries, librari
 ## Environment Setup
 
 ### Installing Bazelisk and Bazel
+
+**Local Installation:**
 ```bash
 # Download bazelisk
 curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o ~/bazelisk
@@ -37,6 +39,12 @@ export PATH=$PATH:~/
 
 # Verify installation
 bazelisk version
+```
+
+**GitHub Actions:**
+```yaml
+- name: Install Bazelisk
+  uses: bazelbuild/setup-bazelisk@v2
 ```
 
 ### Initial Configuration

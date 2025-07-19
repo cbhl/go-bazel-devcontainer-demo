@@ -13,7 +13,7 @@ This directory contains GitHub Actions workflows for continuous integration.
 
 **Steps:**
 1. Setup Go 1.21
-2. Install Bazelisk
+2. Setup Bazelisk (using official action)
 3. Install dependencies (ffmpeg, MinIO, Google Cloud SDK)
 4. Cache Bazel build artifacts
 5. Verify Bazel setup and list available targets
@@ -33,7 +33,7 @@ This directory contains GitHub Actions workflows for continuous integration.
 
 **Steps:**
 1. Setup Go 1.21
-2. Install Bazelisk
+2. Setup Bazelisk (using official action)
 3. Cache Bazel build artifacts
 4. Verify Bazel setup and list available targets
 5. Run roadtrip tests: `bazelisk test //scripts/roadtrip/...`
