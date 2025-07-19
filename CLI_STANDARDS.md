@@ -35,12 +35,11 @@ type CLI struct {
 }
 
 type SplitVideoCmd struct {
-    InputFile    string `arg:"" help:"Input video file path"`
+    InputFile    string `flag:"in" help:"Input video file path"`
     StartTime    string `flag:"start" help:"Start timestamp (HH:MM:SS)"`
     EndTime      string `flag:"end" help:"End timestamp (HH:MM:SS)"`
-    ChunkDuration int    `flag:"duration" default:"30" help:"Chunk duration in seconds"`
-    OutputDir    string `flag:"output" default:"out" help:"Output directory"`
-    Verbose      bool   `flag:"verbose" help:"Enable verbose output"`
+    ChunkDuration int    `flag:"chunk-duration" default:"30" help:"Chunk duration in seconds"`
+    OutputDir    string `flag:"out" default:"out" help:"Output directory"`
 }
 
 func (s *SplitVideoCmd) Run() error {
@@ -115,10 +114,8 @@ import (
 )
 
 func (s *SplitVideoCmd) Run() error {
-    if s.Verbose {
-        fmt.Printf("Processing video: %s\n", s.InputFile)
-        fmt.Printf("Time range: %s to %s\n", s.StartTime, s.EndTime)
-    }
+    fmt.Printf("Processing video: %s\n", s.InputFile)
+    fmt.Printf("Time range: %s to %s\n", s.StartTime, s.EndTime)
     
     // Create progress bar with logging support
     p := mpb.New(mpb.WithWidth(64))
@@ -221,9 +218,8 @@ func TestSplitVideoCmd_Integration(t *testing.T) {
 - Allow override via command-line flags
 
 ### 4. Logging and Output
-- Use structured logging for debugging
+- Use `log/slog` for structured logging
 - Provide progress indicators for long operations
-- Support quiet mode for scripting
 - Use consistent output formats (JSON, CSV, etc.)
 
 ## Example Help Output
@@ -243,9 +239,9 @@ Flags:
   --help, -h   Show this help message
 
 Examples:
-  roadtrip split-video input.mp4 --start 00:00:00 --end 00:05:00
-  roadtrip upload-chunks out/*.mp4 --bucket gs://my-bucket
-  roadtrip build-playlist gs://my-bucket/chunk-*.mp4
+  roadtrip split-video --in input.mp4 --start 00:00:00 --end 00:05:00 --chunk-duration 60 --out out/
+  roadtrip upload-chunks --in out/*.mp4 --bucket gs://my-bucket
+  roadtrip build-playlist --in gs://my-bucket/chunk-*.mp4
 ```
 
 ## Dependencies
@@ -254,25 +250,13 @@ Examples:
 ```go
 go get github.com/alecthomas/kong
 go get github.com/vbauerster/mpb          // For progress bars (supports logging)
-go get github.com/sirupsen/logrus         // For structured logging
 ```
 
 ### Optional Dependencies
 ```go
-go get github.com/spf13/viper             // For configuration management
-go get github.com/urfave/cli/v2           // Alternative CLI framework
+// None currently specified
 ```
 
 ## Migration from Other CLI Libraries
 
-### From Cobra
-- Replace `cobra.Command` with Kong struct tags
-- Convert `RunE` functions to `Run` methods
-- Replace `PersistentFlags` with embedded structs
-- Update help text to use Kong's format
-
-### From urfave/cli
-- Replace `cli.App` with Kong struct
-- Convert `Action` functions to `Run` methods
-- Replace `cli.StringFlag` with struct tags
-- Update command registration to use struct embedding
+This section is intentionally left blank as we're standardizing on Kong for all new CLI tools.

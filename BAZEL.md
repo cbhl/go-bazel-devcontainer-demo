@@ -16,8 +16,10 @@ This repository uses Bazel as the primary build system for all binaries, librari
 - Keep `go.mod` and `go.sum` files in sync with Bazel dependencies
 
 ### 3. Testing Requirements
-- All code should have corresponding unit tests
 - Use `build_test` rules to verify binaries build correctly
+- Write unit tests for critical business logic and error handling
+- Use interfaces and mocks for external dependencies (network, file system, etc.)
+- Consider test coverage vs. complexity - prioritize clean, testable interfaces over 100% coverage
 - Run tests after each significant change: `bazel test //...`
 
 ## Common Commands
@@ -127,9 +129,11 @@ go_test(
 - Prefer internal packages over external dependencies
 
 ### 3. Testing
-- Write tests for all public functions
+- Write tests for critical business logic and error handling
 - Use build tests to verify compilation
 - Test both success and failure cases
+- Use interfaces and mocks for external dependencies
+- Prioritize clean, testable interfaces over 100% coverage
 
 ### 4. Performance
 - Use `deps` instead of `data` for code dependencies

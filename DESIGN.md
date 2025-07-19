@@ -61,19 +61,25 @@ Video Input → Split into Chunks → Upload to Cloud → AI Analysis → CSV Ex
   "description": "string",
   "has_music": "boolean",
   "transcript": "string",
-  "song_title": "string",
-  "song_artist": "string",
-  "web_search_title": "string",
-  "web_search_artist": "string",
-  "youtube_url": "string",
-  "spotify_url": "string",
+  "song": {
+    "title": "string",
+    "artist": "string"
+  },
+  "web_search_song": {
+    "title": "string",
+    "artist": "string"
+  },
+  "urls": {
+    "youtube": "string",
+    "spotify": "string"
+  },
   "video_path": "string"
 }
 ```
 
 ### CSV Output Format
 ```csv
-description,has_music,transcript,song_title,song_artist,web_search_title,web_search_artist,youtube_url,spotify_url,video_path
+description,has_music,transcript,song_title,song_artist,web_search_song_title,web_search_song_artist,youtube_url,spotify_url,video_path
 ```
 
 ## File Structure
@@ -112,6 +118,7 @@ scripts/roadtrip/
 - `encoding/json` - JSON processing
 - `os/exec` - ffmpeg execution
 - `path/filepath` - File operations
+- `log/slog` - Structured logging
 - `github.com/vbauerster/mpb` - Progress bars
 - `google.golang.org/api/generativeai/v1` - Gemini API client
 
