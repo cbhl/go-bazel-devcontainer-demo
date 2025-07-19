@@ -10,6 +10,6 @@ go_library(
 go_test(
     name = "export_test",
     srcs = ["export_test.go"],
-    data = glob(["testdata/**"]),
+    data = ["//scripts/roadtrip:testdata"],
     embed = [":export"],
 )

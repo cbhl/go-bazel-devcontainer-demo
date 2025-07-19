@@ -6,6 +6,12 @@ filegroup(
     visibility = ["//scripts/roadtrip:__subpackages__"],
 )
 
+filegroup(
+    name = "testdata",
+    srcs = glob(["testdata/**"]),
+    visibility = ["//scripts/roadtrip:__subpackages__"],
+)
+
 go_library(
     name = "roadtrip_lib",
     srcs = ["main.go"],
@@ -29,6 +35,6 @@ go_binary(
 go_test(
     name = "roadtrip_test",
     srcs = ["main_test.go"],
-    data = glob(["testdata/**"]),
+    data = [":testdata"],
     embed = [":roadtrip_lib"],
 )

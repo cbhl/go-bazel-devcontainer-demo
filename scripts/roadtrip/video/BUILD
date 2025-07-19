@@ -10,6 +10,6 @@ go_library(
 go_test(
     name = "video_test",
     srcs = ["video_test.go"],
-    data = glob(["testdata/**"]),
+    data = ["//scripts/roadtrip:testdata"],
     embed = [":video"],
 )

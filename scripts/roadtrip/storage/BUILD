@@ -14,6 +14,6 @@ go_library(
 go_test(
     name = "storage_test",
     srcs = ["storage_test.go"],
-    data = glob(["testdata/**"]),
+    data = ["//scripts/roadtrip:testdata"],
     embed = [":storage"],
 )
