@@ -19,21 +19,36 @@ jobs:
       with:
         go-version: '1.21'
         
+    - name: Verify Go
+      run: |
+        go version
+        go env
+        
     - name: Install Bazelisk
       run: |
         curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o /usr/local/bin/bazelisk
         chmod +x /usr/local/bin/bazelisk
+        bazelisk version
         
     - name: Install ffmpeg
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg
+        ffmpeg -version
         
     - name: Install MinIO
       run: |
-        curl -L https://dl.min.io/aistor/minio/release/linux-amd64/minio_20250718144447.0.0_amd64.deb -o /tmp/minio.deb
-        sudo dpkg -i /tmp/minio.deb
-        rm /tmp/minio.deb
+        # Try the specific version first, fallback to latest
+        if curl -L https://dl.min.io/aistor/minio/release/linux-amd64/minio_20250718144447.0.0_amd64.deb -o /tmp/minio.deb; then
+          sudo dpkg -i /tmp/minio.deb
+        else
+          # Fallback to latest version
+          curl -L https://dl.min.io/server/minio/release/linux-amd64/minio -o /tmp/minio
+          sudo mv /tmp/minio /usr/local/bin/minio
+          sudo chmod +x /usr/local/bin/minio
+        fi
+        rm -f /tmp/minio.deb /tmp/minio
+        minio --version
         
     - name: Install Google Cloud SDK
       run: |
@@ -41,9 +56,10 @@ jobs:
         curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
         sudo apt-get update
         sudo apt-get install -y google-cloud-cli
+        gcloud --version
         
     - name: Cache Bazel
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ~/.cache/bazel
@@ -52,6 +68,16 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-bazel-
           
+    - name: Verify Bazel Setup
+      run: |
+        bazelisk version
+        bazelisk info
+        
+    - name: List Available Targets
+      run: |
+        echo "=== Available Targets ==="
+        bazelisk query //... --output=label_kind
+        
     - name: Run Bazel Tests
       run: |
         bazelisk test //...
@@ -60,9 +86,15 @@ jobs:
       run: |
         bazelisk build //...
         
+    - name: Show Test Results
+      if: always()
+      run: |
+        echo "=== Test Results ==="
+        find bazel-testlogs -name "test.log" -exec echo "=== {} ===" \; -exec cat {} \;
+        
     - name: Upload Test Results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-results
         path: |

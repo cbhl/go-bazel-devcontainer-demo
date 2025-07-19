@@ -16,9 +16,11 @@ This directory contains GitHub Actions workflows for continuous integration.
 2. Install Bazelisk
 3. Install dependencies (ffmpeg, MinIO, Google Cloud SDK)
 4. Cache Bazel build artifacts
-5. Run all tests: `bazelisk test //...`
-6. Build all targets: `bazelisk build //...`
-7. Upload test results as artifacts
+5. Verify Bazel setup and list available targets
+6. Run all tests: `bazelisk test //...`
+7. Build all targets: `bazelisk build //...`
+8. Show test results
+9. Upload test results as artifacts
 
 **Use case:** Full CI pipeline for the entire repository.
 
@@ -33,9 +35,10 @@ This directory contains GitHub Actions workflows for continuous integration.
 1. Setup Go 1.21
 2. Install Bazelisk
 3. Cache Bazel build artifacts
-4. Run roadtrip tests: `bazelisk test //scripts/roadtrip/...`
-5. Build roadtrip binary: `bazelisk build //scripts/roadtrip:roadtrip`
-6. Test CLI functionality
+4. Verify Bazel setup and list available targets
+5. Run roadtrip tests: `bazelisk test //scripts/roadtrip/...`
+6. Build roadtrip binary: `bazelisk build //scripts/roadtrip:roadtrip`
+7. Test CLI functionality
 
 **Use case:** Fast feedback for roadtrip tool development.
 
