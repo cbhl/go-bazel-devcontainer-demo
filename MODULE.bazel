@@ -11,7 +11,7 @@ go_deps.from_file(go_mod = "//scripts/roadtrip:go.mod")
 use_repo(go_deps, "com_github_alecthomas_kong", "com_github_minio_minio_go_v7", "com_google_cloud_go_storage", "org_golang_google_api")
 
 go_register_toolchains_ext = use_extension("@rules_go//go:extensions.bzl", "go_register_toolchains", dev_dependency = True)
-go_register_toolchains_ext.download(version = "1.27.0")
+go_register_toolchains_ext.download(version = "1.23.11")
 use_repo(go_register_toolchains_ext, "go_register_toolchains")
 
 go_rules_dependencies_ext = use_extension("@rules_go//go:extensions.bzl", "go_rules_dependencies")
