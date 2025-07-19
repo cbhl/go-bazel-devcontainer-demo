@@ -43,8 +43,15 @@ bazelisk version
 
 **GitHub Actions:**
 ```yaml
-- name: Install Bazelisk
-  uses: bazelbuild/setup-bazelisk@v2
+- name: Setup Bazel
+  uses: bazel-contrib/setup-bazel@0.15.0
+  with:
+    # Avoid downloading Bazel every time.
+    bazelisk-cache: true
+    # Store build cache per workflow.
+    disk-cache: ${{ github.workflow }}
+    # Share repository cache between workflows.
+    repository-cache: true
 ```
 
 ### Initial Configuration
