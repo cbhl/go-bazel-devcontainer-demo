@@ -42,17 +42,15 @@ jobs:
         
     - name: Install MinIO
       run: |
-        # Try the specific version first, fallback to latest
-        if curl -L https://dl.min.io/aistor/minio/release/linux-amd64/minio_20250718144447.0.0_amd64.deb -o /tmp/minio.deb; then
-          sudo dpkg -i /tmp/minio.deb
-        else
-          # Fallback to latest version
-          curl -L https://dl.min.io/server/minio/release/linux-amd64/minio -o /tmp/minio
-          sudo mv /tmp/minio /usr/local/bin/minio
-          sudo chmod +x /usr/local/bin/minio
-        fi
-        rm -f /tmp/minio.deb /tmp/minio
+        # Download latest MinIO binary
+        echo "Downloading MinIO..."
+        curl -L https://dl.min.io/server/minio/release/linux-amd64/minio -o /tmp/minio
+        echo "Installing MinIO..."
+        sudo mv /tmp/minio /usr/local/bin/minio
+        sudo chmod +x /usr/local/bin/minio
+        echo "Verifying MinIO installation..."
         minio --version
+        echo "MinIO installation complete"
         
     - name: Install Google Cloud SDK
       run: |
