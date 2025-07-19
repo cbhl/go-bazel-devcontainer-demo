@@ -35,8 +35,8 @@ profile.cov
 core
 core.*
 
-# Built binaries
-roadtrip
+# Built binaries (be specific to avoid ignoring directories)
+/scripts/roadtrip/roadtrip
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
