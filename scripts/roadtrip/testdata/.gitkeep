@@ -1,0 +1,2 @@
+# This file ensures the testdata directory is tracked by git
+# and allows the glob pattern in BUILD to work correctly
