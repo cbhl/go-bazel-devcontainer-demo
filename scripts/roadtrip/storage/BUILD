@@ -5,6 +5,10 @@ go_library(
     srcs = ["storage.go"],
     importpath = "backend/scripts/roadtrip/storage",
     visibility = ["//scripts/roadtrip:__subpackages__"],
+    deps = [
+        "@com_github_minio_minio_go_v7//:minio-go",
+        "@com_google_cloud_go_storage//:storage",
+    ],
 )
 
 go_test(
