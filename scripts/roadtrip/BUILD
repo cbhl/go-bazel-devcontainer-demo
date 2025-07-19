@@ -6,11 +6,11 @@ go_library(
     importpath = "backend/scripts/roadtrip",
     visibility = ["//scripts/roadtrip:__subpackages__"],
     deps = [
-        "@com_github_alecthomas_kong//:kong",
         "//scripts/roadtrip/ai",
         "//scripts/roadtrip/export",
         "//scripts/roadtrip/storage",
         "//scripts/roadtrip/video",
+        "@com_github_alecthomas_kong//:kong",
     ],
 )
 

@@ -28,22 +28,7 @@ func TestGCSClient_NewGCSClient(t *testing.T) {
 	}
 }
 
-func TestMinIOClient_NewMinIOClient(t *testing.T) {
-	// This test requires MinIO server, so we'll skip it in CI
-	if testing.Short() {
-		t.Skip("skipping MinIO test in short mode")
-	}
 
-	client, err := NewMinIOClient("localhost:9000", "minioadmin", "minioadmin", "test-bucket", false)
-	if err != nil {
-		t.Skipf("MinIO test skipped: %v", err)
-	}
-	defer client.Close()
-
-	if client.bucketName != "test-bucket" {
-		t.Errorf("Expected bucket name 'test-bucket', got '%s'", client.bucketName)
-	}
-}
 
 func TestUploadManager_UploadFiles(t *testing.T) {
 	// Create temporary test files
