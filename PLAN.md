@@ -24,15 +24,17 @@ Build a command-line tool in Go to help create roadtrip playlists from vlog vide
 **Phase 2 Complete - Ready for Phase 3**
 
 ### Phase 3: Video Processing
-- [ ] Add `split-video` command with flags:
+- [x] Add `split-video` command with flags:
   - Input video filename
   - Start timestamp
   - End timestamp  
   - Chunk duration
   - Output folder (default: `out/`)
-- [ ] Implement ffmpeg integration with copy codec
-- [ ] Add progress bar and command output visibility
-- [ ] Test with sample video files
+- [x] Implement ffmpeg integration with copy codec
+- [x] Add progress bar and command output visibility
+- [x] Test with sample video files
+
+**Phase 3 Complete - Ready for Phase 4**
 
 ### Phase 4: Cloud Storage Integration
 - [ ] Add `upload-chunks` command with flags:

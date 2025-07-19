@@ -116,6 +116,9 @@ bazelisk run //scripts/roadtrip:roadtrip -- --help
 
 # Run the built binary directly
 bazel-bin/scripts/roadtrip/roadtrip_/roadtrip --help
+
+# Run video splitting command
+bazelisk run //scripts/roadtrip:roadtrip -- split-video input.mp4 --start-time 00:00:10 --end-time 00:00:30 --chunk-duration 5 --output-dir chunks/
 ```
 
 ### Testing
@@ -191,6 +194,25 @@ go_test(
     name = "env_test",
     srcs = ["env_test.go"],
     embed = [":env"],
+)
+```
+
+### Example Video Processing Package BUILD Rule
+```python
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "video",
+    srcs = ["video.go"],
+    importpath = "backend/scripts/roadtrip/video",
+    visibility = ["//scripts/roadtrip:__subpackages__"],
+)
+
+go_test(
+    name = "video_test",
+    srcs = ["video_test.go"],
+    embed = [":video"],
+    data = glob(["testdata/**"]),
 )
 ```
 

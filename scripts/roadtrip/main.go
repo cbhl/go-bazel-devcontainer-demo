@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
+	"backend/scripts/roadtrip/video"
 )
 
 // CLI represents the main command-line interface
@@ -50,8 +51,28 @@ func (s *SplitVideoCmd) Run() error {
 	fmt.Printf("Chunk duration: %d seconds\n", s.ChunkDuration)
 	fmt.Printf("Output directory: %s\n", s.OutputDir)
 	
-	// TODO: Implement video splitting logic
-	fmt.Println("Hello from split-video command!")
+	// Create video processor
+	processor, err := video.NewVideoProcessor()
+	if err != nil {
+		return fmt.Errorf("failed to create video processor: %w", err)
+	}
+
+	// Get video info
+	info, err := processor.GetVideoInfo(s.InputFile)
+	if err != nil {
+		return fmt.Errorf("failed to get video info: %w", err)
+	}
+
+	fmt.Printf("Video duration: %s\n", info["duration"])
+	if videoStream, ok := info["video_stream"]; ok {
+		fmt.Printf("Video stream: %s\n", videoStream)
+	}
+
+	// Split video into chunks
+	if err := processor.SplitVideo(s.InputFile, s.OutputDir, s.StartTime, s.EndTime, s.ChunkDuration); err != nil {
+		return fmt.Errorf("failed to split video: %w", err)
+	}
+
 	return nil
 }
 

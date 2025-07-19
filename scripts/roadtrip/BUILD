@@ -5,7 +5,10 @@ go_library(
     srcs = ["main.go"],
     importpath = "backend/scripts/roadtrip",
     visibility = ["//scripts/roadtrip:__subpackages__"],
-    deps = ["@com_github_alecthomas_kong//:kong"],
+    deps = [
+        "@com_github_alecthomas_kong//:kong",
+        "//scripts/roadtrip/video",
+    ],
 )
 
 go_binary(
