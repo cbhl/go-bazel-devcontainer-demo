@@ -61,7 +61,7 @@ func TestUploadManager_UploadFiles(t *testing.T) {
 	}
 
 	// Create a mock storage client for testing
-	mockClient := &MockStorageClient{}
+	mockClient := NewMockStorageClient("test-project", "test-bucket")
 	manager := NewUploadManager(mockClient)
 	defer manager.Close()
 
@@ -73,21 +73,7 @@ func TestUploadManager_UploadFiles(t *testing.T) {
 
 	// Verify that all files were uploaded
 	expectedUploads := len(testFiles)
-	if mockClient.uploadCount != expectedUploads {
-		t.Errorf("Expected %d uploads, got %d", expectedUploads, mockClient.uploadCount)
+	if mockClient.UploadCount != expectedUploads {
+		t.Errorf("Expected %d uploads, got %d", expectedUploads, mockClient.UploadCount)
 	}
-}
-
-// MockStorageClient for testing
-type MockStorageClient struct {
-	uploadCount int
-}
-
-func (m *MockStorageClient) UploadFile(ctx context.Context, localPath, remotePath string) error {
-	m.uploadCount++
-	return nil
-}
-
-func (m *MockStorageClient) Close() error {
-	return nil
 }

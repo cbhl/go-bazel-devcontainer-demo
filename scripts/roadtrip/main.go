@@ -2,13 +2,16 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"log/slog"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/alecthomas/kong"
+	"backend/scripts/roadtrip/ai"
+	"backend/scripts/roadtrip/export"
 	"backend/scripts/roadtrip/storage"
 	"backend/scripts/roadtrip/video"
 )
@@ -203,8 +206,56 @@ func (b *BuildPlaylistCmd) Run() error {
 	}
 	fmt.Printf("Validate JSON: %v\n", b.Validate)
 	
-	// TODO: Implement playlist building logic
-	fmt.Println("Hello from build-playlist command!")
+	// Create AI client (using mock for now)
+	client := ai.NewMockAIClient()
+	defer client.Close()
+	
+	// Create analysis manager
+	manager := ai.NewAnalysisManager(client)
+	defer manager.Close()
+	
+	// Analyze videos
+	ctx := context.Background()
+	responses, err := manager.AnalyzeVideos(ctx, b.In)
+	if err != nil {
+		return fmt.Errorf("failed to analyze videos: %w", err)
+	}
+	
+	// Output results
+	for i, response := range responses {
+		fmt.Printf("\n=== Analysis %d ===\n", i+1)
+		fmt.Printf("Video: %s\n", response.VideoPath)
+		fmt.Printf("Description: %s\n", response.Description)
+		fmt.Printf("Has Music: %v\n", response.HasMusic)
+		
+		if response.HasMusic {
+			fmt.Printf("Song: %s - %s\n", response.Song.Artist, response.Song.Title)
+			if response.WebSearchSong.Title != "" {
+				fmt.Printf("Web Search: %s - %s\n", response.WebSearchSong.Artist, response.WebSearchSong.Title)
+			}
+			if response.URLs.YouTube != "" {
+				fmt.Printf("YouTube: %s\n", response.URLs.YouTube)
+			}
+			if response.URLs.Spotify != "" {
+				fmt.Printf("Spotify: %s\n", response.URLs.Spotify)
+			}
+		}
+		
+		if response.Transcript != "" {
+			fmt.Printf("Transcript: %s\n", response.Transcript)
+		}
+		
+		// Output JSON if validation is requested
+		if b.Validate {
+			jsonData, err := json.MarshalIndent(response, "", "  ")
+			if err != nil {
+				fmt.Printf("Failed to marshal JSON: %v\n", err)
+			} else {
+				fmt.Printf("JSON Output:\n%s\n", string(jsonData))
+			}
+		}
+	}
+	
 	return nil
 }
 
@@ -216,9 +267,22 @@ func (b *BuildPlaylistCSVCmd) Run() error {
 	
 	fmt.Printf("Converting to CSV from: %s\n", b.In)
 	
-	// TODO: Implement CSV conversion logic
-	fmt.Println("Hello from build-playlist-csv command!")
-	return nil
+	// Create export manager
+	manager := export.NewExportManager(os.Stdout)
+	
+	// Handle stdin if input is "-"
+	if b.In == "-" {
+		// Read from stdin
+		data, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			return fmt.Errorf("failed to read from stdin: %w", err)
+		}
+		
+		return manager.ExportFromString(string(data))
+	}
+	
+	// Export from file
+	return manager.ExportFromFile(b.In)
 }
 
 func main() {
