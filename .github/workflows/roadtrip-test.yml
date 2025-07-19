@@ -26,9 +26,9 @@ jobs:
         go version
         go env
         
-    - name: Install Bazelisk
+        - name: Install Bazelisk
       uses: bazelbuild/setup-bazelisk@v2
-        
+      
     - name: Cache Bazel
       uses: actions/cache@v4
       with:
