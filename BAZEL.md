@@ -259,6 +259,24 @@ bazelisk build //...
 3. Run `bazelisk build //...`
 4. Generate and upload test coverage reports
 
+### GitHub Actions Workflows
+
+Two workflows are configured:
+
+**bazel-test.yml** - Full repository testing:
+- Runs on all pushes and PRs
+- Installs all dependencies (ffmpeg, MinIO, Google Cloud SDK)
+- Tests all targets with `bazelisk test //...`
+- Builds all targets with `bazelisk build //...`
+- Uploads test results as artifacts
+
+**roadtrip-test.yml** - Focused roadtrip tool testing:
+- Runs only when roadtrip tool files change
+- Minimal dependencies (just Go and Bazelisk)
+- Tests only roadtrip tool with `bazelisk test //scripts/roadtrip/...`
+- Builds and tests the CLI functionality
+- Faster execution for development
+
 ## Roadtrip Tool Specific Setup
 
 ### Project Structure
@@ -275,6 +293,10 @@ scripts/roadtrip/
 │   └── BUILD
 └── testdata/              # Test data directory
     └── .gitkeep
+
+.github/workflows/
+├── bazel-test.yml         # Full repository CI
+└── roadtrip-test.yml      # Focused roadtrip tool CI
 ```
 
 ### Key Configuration Files
