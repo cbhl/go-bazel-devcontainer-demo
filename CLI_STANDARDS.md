@@ -240,8 +240,8 @@ Flags:
 
 Examples:
   roadtrip split-video --in input.mp4 --start 00:00:00 --end 00:05:00 --chunk-duration 60 --out out/
-  roadtrip upload-chunks --in out/*.mp4 --bucket gs://my-bucket
-  roadtrip build-playlist --in gs://my-bucket/chunk-*.mp4
+  roadtrip upload-chunks --in out/*.mp4 --bucket gs://cbhl-roadtrip-202507/chunks/
+  roadtrip build-playlist --in gs://cbhl-roadtrip-202507/chunks/chunk-*.mp4
 ```
 
 ## Dependencies
