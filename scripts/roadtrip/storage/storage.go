@@ -6,17 +6,13 @@ import (
 	"io"
 	"log/slog"
 	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"cloud.google.com/go/storage"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 	"google.golang.org/api/option"
 )
 
-// StorageClient interface for both GCS and MinIO
+// StorageClient interface for GCS
 type StorageClient interface {
 	UploadFile(ctx context.Context, localPath, remotePath string) error
 	Close() error
@@ -27,12 +23,6 @@ type GCSClient struct {
 	client     *storage.Client
 	bucketName string
 	projectID  string
-}
-
-// MinIOClient implements StorageClient for MinIO
-type MinIOClient struct {
-	client     *minio.Client
-	bucketName string
 }
 
 // MockStorageClient implements StorageClient for testing
@@ -53,22 +43,6 @@ func NewGCSClient(ctx context.Context, projectID, bucketName string) (*GCSClient
 		client:     client,
 		bucketName: bucketName,
 		projectID:  projectID,
-	}, nil
-}
-
-// NewMinIOClient creates a new MinIO client for testing
-func NewMinIOClient(endpoint, accessKey, secretKey, bucketName string, useSSL bool) (*MinIOClient, error) {
-	client, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
-		Secure: useSSL,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create MinIO client: %w", err)
-	}
-
-	return &MinIOClient{
-		client:     client,
-		bucketName: bucketName,
 	}, nil
 }
 
@@ -114,39 +88,6 @@ func (g *GCSClient) UploadFile(ctx context.Context, localPath, remotePath string
 // Close closes the GCS client
 func (g *GCSClient) Close() error {
 	return g.client.Close()
-}
-
-// UploadFile uploads a file to MinIO
-func (m *MinIOClient) UploadFile(ctx context.Context, localPath, remotePath string) error {
-	file, err := os.Open(localPath)
-	if err != nil {
-		return fmt.Errorf("failed to open file %s: %w", localPath, err)
-	}
-	defer file.Close()
-
-	fileInfo, err := file.Stat()
-	if err != nil {
-		return fmt.Errorf("failed to get file info: %w", err)
-	}
-
-	_, err = m.client.PutObject(ctx, m.bucketName, remotePath, file, fileInfo.Size(), minio.PutObjectOptions{
-		ContentType: "application/octet-stream",
-		UserMetadata: map[string]string{
-			"uploaded-by": "roadtrip-tool",
-			"upload-time": time.Now().Format(time.RFC3339),
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to upload file to MinIO: %w", err)
-	}
-
-	slog.Info("Uploaded file to MinIO", "local", localPath, "remote", remotePath)
-	return nil
-}
-
-// Close closes the MinIO client
-func (m *MinIOClient) Close() error {
-	return nil // MinIO client doesn't need explicit closing
 }
 
 // UploadFile simulates uploading a file
