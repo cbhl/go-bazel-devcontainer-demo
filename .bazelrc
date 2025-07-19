@@ -1,13 +1,2 @@
-# Go configuration
-build --repo_env=GOSUMDB=sum.golang.org
-build --repo_env=GOPROXY=https://proxy.golang.org
-build --repo_env=GONOSUMDB=
-build --repo_env=GOPRIVATE=
-build --repo_env=GOSUMDB=sum.golang.org
-build --repo_env=GOPROXY=https://proxy.golang.org
-build --repo_env=GONOSUMDB=
-build --repo_env=GOPRIVATE=
-build --repo_env=GOSUMDB=sum.golang.org
-build --repo_env=GOPROXY=https://proxy.golang.org
-build --repo_env=GONOSUMDB=
-build --repo_env=GOPRIVATE=
+build --curses=yes
+build --color=yes
