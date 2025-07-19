@@ -42,14 +42,16 @@ Video Input → Split into Chunks → Upload to Cloud → AI Analysis → CSV Ex
   - Video content analysis
   - Music detection and identification
   - Web search integration for song details
-- **Output**: Structured JSON with song information
+  - Environment variable configuration (GEMINI_API_KEY)
+- **Output**: Verbatim Gemini response with optional JSON validation
 
 ### 5. Data Export Module
 - **Technology**: Go CSV library
 - **Functionality**:
-  - JSON to CSV conversion
+  - Relaxed JSON parsing for non-standard Gemini outputs
+  - JSON to CSV conversion with error handling
   - Standardized playlist format
-  - Unit testable with mock data
+  - Unit testable with mock data including malformed JSON
 
 ## Data Structures
 
@@ -79,6 +81,9 @@ description,has_music,transcript,song_title,song_artist,web_search_title,web_sea
 scripts/roadtrip/
 ├── main.go                 # Main CLI entry point
 ├── BUILD                   # Bazel build rules
+├── env/                    # Environment configuration
+│   ├── env.go             # Environment variable handling
+│   └── config.go          # Configuration structures
 ├── commands/               # Command implementations
 │   ├── split_video.go
 │   ├── upload_chunks.go
@@ -94,6 +99,7 @@ scripts/roadtrip/
 └── testdata/              # Test data and examples
     ├── sample_video.mp4
     ├── sample_response.json
+    ├── malformed_response.json
     └── expected_output.csv
 ```
 
@@ -106,11 +112,14 @@ scripts/roadtrip/
 - `encoding/json` - JSON processing
 - `os/exec` - ffmpeg execution
 - `path/filepath` - File operations
+- `github.com/vbauerster/mpb` - Progress bars
+- `google.golang.org/api/generativeai/v1` - Gemini API client
 
 ### External Dependencies
 - ffmpeg (via devcontainer feature)
 - Google Cloud SDK
 - Gemini 2.5 Flash API access
+- MinIO (for local testing)
 
 ## Error Handling Strategy
 
@@ -143,9 +152,31 @@ scripts/roadtrip/
 ## Configuration
 
 The tool will support configuration via:
-1. Environment variables
-2. Configuration files
-3. Command-line flags (highest priority)
+1. Environment variables (GEMINI_API_KEY, GCP project settings)
+2. Command-line flags (highest priority)
+3. Default GCS bucket: `cbhl-roadtrip-202507` in project `gen-lang-client-0629405113` in region `northamerica-northeast2`
+
+## JSON Handling Strategy
+
+### build-playlist Command
+- Outputs verbatim Gemini response to stdout
+- Optional `--validate-json` flag to check if response is valid JSON
+- Continues processing even if JSON is malformed
+- Provides clear error messages for API failures
+
+### build-playlist-csv Command
+- Implements relaxed JSON parsing to handle non-standard Gemini outputs
+- Attempts to extract JSON from prose text using regex patterns
+- Falls back to manual parsing if standard JSON parsing fails
+- Provides warnings for malformed data but continues processing
+- Supports filtering and data cleaning options
+
+### Alternative Design: Filter Command
+Consider adding a separate `filter` command that:
+- Takes raw Gemini output and extracts/validates JSON
+- Provides data cleaning and transformation
+- Outputs standardized JSON for downstream processing
+- Can be chained: `build-playlist | filter | build-playlist-csv`
 
 ## Future Enhancements
 
@@ -154,3 +185,4 @@ The tool will support configuration via:
 3. **Music Recognition**: Integrate with music recognition APIs
 4. **GUI Interface**: Optional web-based interface
 5. **Cloud Functions**: Serverless processing for large videos
+6. **Data Filtering**: Advanced filtering and transformation commands

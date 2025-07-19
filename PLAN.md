@@ -7,8 +7,10 @@ Build a command-line tool in Go to help create roadtrip playlists from vlog vide
 
 ### Phase 1: Environment Setup
 - [ ] Add ffmpeg devcontainer feature: `ghcr.io/devcontainers-extra/features/ffmpeg-apt-get:1`
+- [ ] Add MinIO devcontainer installation for testing
 - [ ] Create Bazel documentation for the repository
 - [ ] Document Go/Kong CLI standards
+- [ ] Create environment configuration structure in `env/` folder
 
 ### Phase 2: Basic CLI Foundation
 - [ ] Create `scripts/roadtrip/` directory structure
@@ -44,13 +46,15 @@ Build a command-line tool in Go to help create roadtrip playlists from vlog vide
 - [ ] Create `scripts/roadtrip/prompts/` directory
 - [ ] Design Gemini 2.5 Flash prompt template for video analysis
 - [ ] Add `build-playlist` command for GCS path processing
-- [ ] Implement JSON response parsing
+- [ ] Implement Gemini API integration with GEMINI_API_KEY environment variable
+- [ ] Add verbatim output handling with optional JSON validation flag
 
 ### Phase 6: Data Export
 - [ ] Add `build-playlist-csv` command
-- [ ] Implement JSON to CSV conversion
-- [ ] Add comprehensive unit tests with example data
+- [ ] Implement relaxed JSON parsing for non-standard Gemini outputs
+- [ ] Add comprehensive unit tests with example data including malformed JSON
 - [ ] Test CSV output format
+- [ ] Consider adding optional filter command for data processing
 
 ### Phase 7: Documentation
 - [ ] Create comprehensive README
@@ -72,3 +76,5 @@ Build a command-line tool in Go to help create roadtrip playlists from vlog vide
 - Kong CLI library
 - Google Cloud SDK
 - Gemini 2.5 Flash API access
+- MinIO (for testing)
+- vbauerster/mpb or similar progress bar library

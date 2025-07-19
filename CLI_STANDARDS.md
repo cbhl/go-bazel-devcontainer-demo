@@ -109,19 +109,25 @@ func (s *SplitVideoCmd) Run() error {
 
 ### 4. Progress and Output
 ```go
+import (
+    "github.com/vbauerster/mpb/v8"
+    "github.com/vbauerster/mpb/v8/decor"
+)
+
 func (s *SplitVideoCmd) Run() error {
     if s.Verbose {
         fmt.Printf("Processing video: %s\n", s.InputFile)
         fmt.Printf("Time range: %s to %s\n", s.StartTime, s.EndTime)
     }
     
-    // Show progress
-    progress := progressbar.Default(100)
-    defer progress.Finish()
+    // Create progress bar with logging support
+    p := mpb.New(mpb.WithWidth(64))
+    bar := p.AddBar(100, mpb.BarStyle("╢▌▌░╟"))
     
     // Update progress during processing
-    progress.Add(10)
+    bar.IncrementBy(10)
     
+    p.Wait() // Wait for all bars to complete
     return nil
 }
 ```
@@ -247,7 +253,7 @@ Examples:
 ### Required Dependencies
 ```go
 go get github.com/alecthomas/kong
-go get github.com/schollz/progressbar/v3  // For progress bars
+go get github.com/vbauerster/mpb          // For progress bars (supports logging)
 go get github.com/sirupsen/logrus         // For structured logging
 ```
 
