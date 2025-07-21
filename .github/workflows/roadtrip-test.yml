@@ -2,11 +2,11 @@ name: Roadtrip Tool Tests
 
 on:
   push:
-    branches: [ main, master ]
-    paths: [ 'scripts/roadtrip/**', 'MODULE.bazel', 'MODULE.bazel.lock' ]
+    branches: [ main ]
+    paths: [ 'scripts/roadtrip/**' ]
   pull_request:
-    branches: [ main, master ]
-    paths: [ 'scripts/roadtrip/**', 'MODULE.bazel', 'MODULE.bazel.lock' ]
+    branches: [ main ]
+    paths: [ 'scripts/roadtrip/**' ]
 
 jobs:
   test-roadtrip:
@@ -68,3 +68,12 @@ jobs:
       run: |
         bazelisk run //scripts/roadtrip:roadtrip -- --help
         bazelisk run //scripts/roadtrip:roadtrip -- split-video --help
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          bazel-testlogs/
+          bazel-out/
