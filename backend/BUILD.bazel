@@ -1,8 +1,15 @@
-load("@rules_go//go:def.bzl", "go_binary")
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
 
 go_binary(
     name = "backend_server",
-    srcs = ["main.go"],
+    embed = [":backend_lib"],
     importpath = "example.com/backend",
     visibility = ["//visibility:public"],
+)
+
+go_library(
+    name = "backend_lib",
+    srcs = ["main.go"],
+    importpath = "backend/backend",
+    visibility = ["//visibility:private"],
 )

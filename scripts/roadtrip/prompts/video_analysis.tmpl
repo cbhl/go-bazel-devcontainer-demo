@@ -1,0 +1,27 @@
+{{define "video_analysis.tmpl"}}
+Analyze this video and provide the following information in JSON format:
+
+Video Path: {{.VideoPath}}
+
+Please analyze the video content, audio, and any visual or textual information to provide accurate analysis.
+
+Expected JSON format:
+{
+  "description": "Brief description of the video content",
+  "has_music": true/false,
+  "transcript": "Any spoken words or lyrics if present",
+  "song": {
+    "title": "Song title if identified",
+    "artist": "Artist name if identified"
+  },
+  "web_search_song": {
+    "title": "Song title from web search if different",
+    "artist": "Artist name from web search if different"
+  },
+  "urls": {
+    "youtube": "YouTube URL if found",
+    "spotify": "Spotify URL if found"
+  },
+  "video_path": "{{.VideoPath}}"
+}
+{{end}}

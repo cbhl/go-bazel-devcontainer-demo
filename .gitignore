@@ -31,6 +31,13 @@ coverage.*
 *.coverprofile
 profile.cov
 
+# Core dump files
+core
+core.*
+
+# Built binaries (be specific to avoid ignoring directories)
+/scripts/roadtrip/roadtrip
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
